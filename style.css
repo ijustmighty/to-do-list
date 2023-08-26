@@ -80,16 +80,17 @@ button {
 	left: 8px;
 }
 
-
-
+.krugalochka.checked {
+	background-image: url(images/checked.png);
+}
 
 p.checked {
 	color: #555;
 	text-decoration: line-through;
 }
 
-.krugalochka.checked {
-	background-image: url(images/checked.png);
+p.invis {
+	display: none;
 }
 
 .editor { 
