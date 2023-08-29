@@ -57,16 +57,17 @@ button {
 	cursor: pointer;
 }
 
-ul li {
+.tasks {
 	list-style: none;
 	font-size: 17px;
 	padding: 12px 8px 12px 50px;
 	user-select: none;
 	cursor: pointer;
 	position: relative;
+	display: flex;
 }
 
-ul li::before { 
+.krugalochka { 
 	content: '';
 	position: absolute;
 	height: 28px;
@@ -79,16 +80,35 @@ ul li::before {
 	left: 8px;
 }
 
-ul li.checked {
+.krugalochka.checked {
+	background-image: url(images/checked.png);
+}
+
+p.checked {
 	color: #555;
 	text-decoration: line-through;
 }
 
-ul li.checked::before {
-	background-image: url(images/checked.png);
+p.invis {
+	display: none;
 }
 
-ul li span {
+.editor { 
+	content: '';
+	position: absolute;
+	height: 40px;
+	width: 40px;
+	border-radius: 50%;
+	background-image: url(images/pencil.png);
+	background-size: cover;
+	background-position: center;
+	top: 5px;
+	right: 45px;
+	text-align: center;
+	line-height: 40px;
+}
+
+span {
 	position: absolute;
 	right: 0;
 	top: 5px;
@@ -101,6 +121,18 @@ ul li span {
 	border-radius: 50%;
 }
 
-ul li span:hover {
+span:hover {
 	background: #d4ccff;
 } 
+
+
+/* #list-container {
+	border: 1px dotted green;
+}
+
+
+#check {
+	border: 1px dotted red;
+	height: 100px;
+} */
+
