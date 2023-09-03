@@ -1,5 +1,6 @@
 const inputBox = document.getElementById("input-box");//Для получения введённого текста задачи
 const listContainer = document.getElementById("list-container");//Для контейнера с задачами
+let tasksData = [];
 
 
 let lastElementId = parseInt(localStorage.getItem("lastElementId")) || 0;//Уникальный id для каждой новой задачи
@@ -148,19 +149,19 @@ function showTask() {
 //для того чтобы ставить и убирать галочку, зачёкивать выполненную задачу и убирать задачу из списка при нажатии на крестик
 //!нужно реализовать так, чтобы изменения приходили в силу при нажатии на галочку а не на текст
 listContainer.addEventListener("click", function(e) {
-	if(e.target.tagName === "P") {
-		e.target.classList.toggle("checked");
-		const circle = e.target.parentElement.querySelector(".circle");
-		if (circle) {
-			circle.classList.toggle("checked");
-		}
-		saveData();
-	}
-	else if(e.target.tagName === "SPAN"){
-		e.target.parentElement.remove();
-		saveData();
-	}
+  if (e.target.classList.contains("circle")) {
+    e.target.classList.toggle("checked");
+    const text = e.target.nextElementSibling;
+    if (text && text.tagName === "P") {
+      text.classList.toggle("checked");
+    }
+    saveData();
+  } else if (e.target.tagName === "SPAN") {
+    e.target.parentElement.remove();
+    saveData();
+  }
 }, false);
+
 
 
 //Меняем текст в задаче

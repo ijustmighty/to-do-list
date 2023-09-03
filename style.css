@@ -84,6 +84,10 @@ button {
 	background-image: url(images/checked.png);
 }
 
+p {
+	padding-top: 3px;
+}
+
 p.checked {
 	color: #555;
 	text-decoration: line-through;
