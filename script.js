@@ -10,7 +10,7 @@ function saveData() {
 	const tasksData = Array.from(listContainer.querySelectorAll(".tasks")).map(taskElement => {
 		const taskId = taskElement.getAttribute("data-task-id");
 		const text = taskElement.querySelector("p").textContent;
-		const isChecked = taskElement.querySelector(".krugalochka").classList.contains("checked");
+		const isChecked = taskElement.querySelector(".circle").classList.contains("checked");
 		return { id: taskId, text: text, isChecked: isChecked };
 	});
 	localStorage.setItem("tasksData", JSON.stringify(tasksData));
@@ -23,23 +23,23 @@ function addTask() {
 		alert("Ты должен написать свою задачу!");
 	}
 	else {
-		const blochok = document.createElement("div");//Сам блок 
-		blochok.classList.add("tasks");
-		blochok.setAttribute("data-task-id", lastElementId++);//присваемваем уникальный id каждому новому 'блочку'
-		blochok.setAttribute("draggable", "true"); // Добавляем атрибут "draggable"
-		listContainer.appendChild(blochok);
+		const block = document.createElement("div");//Сам блок 
+		block.classList.add("tasks");
+		block.setAttribute("data-task-id", lastElementId++);//присваемваем уникальный id каждому новому 'блочку'
+		block.setAttribute("draggable", "true"); // Добавляем атрибут "draggable"
+		listContainer.appendChild(block);
 		const chekk = document.createElement("div");//Для галочки
-		chekk.classList.add("krugalochka");
-		blochok.appendChild(chekk);
-		let textik = document.createElement("p");//Для текста
-		textik.innerHTML = inputBox.value;
-		blochok.appendChild(textik);
+		chekk.classList.add("circle");
+		block.appendChild(chekk);
+		let text = document.createElement("p");//Для текста
+		text.innerHTML = inputBox.value;
+		block.appendChild(text);
 		let pencil = document.createElement ("div");//Для редактора 
 		pencil.classList.add ("editor");
-		blochok.appendChild(pencil);
-		let krest = document.createElement("span");//Для удаления задачи
-		krest.innerHTML = "\u00d7";
-		blochok.appendChild(krest);
+		block.appendChild(pencil);
+		let cross = document.createElement("span");//Для удаления задачи
+		cross.innerHTML = "\u00d7";
+		block.appendChild(cross);
 	}
 	inputBox.value = "";
 	localStorage.setItem("lastElementId", lastElementId);
@@ -114,19 +114,19 @@ function showTask() {
 
 			// Создание элемента для галочки
 			const chekk = document.createElement("div");
-			chekk.classList.add("krugalochka"); // Добавляем класс "krugalochka" к элементу
+			chekk.classList.add("circle"); // Добавляем класс "circle" к элементу
 			if (taskData.isChecked) {
 				chekk.classList.add("checked"); // Если задача отмечена, добавляем класс "checked" для стилизации
 			}
 			taskElement.appendChild(chekk);
 
 			// Создание элемента для текста задачи
-			const textik = document.createElement("p");
-			textik.textContent = taskData.text; // Устанавливаем текст задачи
+			const text = document.createElement("p");
+			text.textContent = taskData.text; // Устанавливаем текст задачи
 			if (taskData.isChecked) {
-				textik.classList.add("checked"); // Если задача отмечена, добавляем класс "checked" для стилизации
+				text.classList.add("checked"); // Если задача отмечена, добавляем класс "checked" для стилизации
 			}
-			taskElement.appendChild(textik);
+			taskElement.appendChild(text);
 
 			// Создание элемента для редактирования задачи
 			const pencil = document.createElement("div");
@@ -134,9 +134,9 @@ function showTask() {
 			taskElement.appendChild(pencil);
 
 			// Создание элемента для удаления задачи
-			const krest = document.createElement("span");
-			krest.innerHTML = "\u00d7"; // Устанавливаем символ "×" для удаления
-			taskElement.appendChild(krest);
+			const cross = document.createElement("span");
+			cross.innerHTML = "\u00d7"; // Устанавливаем символ "×" для удаления
+			taskElement.appendChild(cross);
 
 			// Добавляем созданный элемент задачи в контейнер списка
 			listContainer.appendChild(taskElement);
@@ -150,9 +150,9 @@ function showTask() {
 listContainer.addEventListener("click", function(e) {
 	if(e.target.tagName === "P") {
 		e.target.classList.toggle("checked");
-		const krugalochka = e.target.parentElement.querySelector(".krugalochka");
-		if (krugalochka) {
-			krugalochka.classList.toggle("checked");
+		const circle = e.target.parentElement.querySelector(".circle");
+		if (circle) {
+			circle.classList.toggle("checked");
 		}
 		saveData();
 	}

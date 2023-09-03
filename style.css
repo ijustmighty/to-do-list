@@ -67,7 +67,7 @@ button {
 	display: flex;
 }
 
-.krugalochka { 
+.circle { 
 	content: '';
 	position: absolute;
 	height: 28px;
@@ -80,7 +80,7 @@ button {
 	left: 8px;
 }
 
-.krugalochka.checked {
+.circle.checked {
 	background-image: url(images/checked.png);
 }
 
@@ -126,7 +126,7 @@ span:hover {
 } 
 
 
-/* #list-container {
+#list-container {
 	border: 1px dotted green;
 }
 
@@ -134,5 +134,5 @@ span:hover {
 #check {
 	border: 1px dotted red;
 	height: 100px;
-} */
+}
 
