@@ -3,7 +3,7 @@ const listContainer = document.getElementById("list-container");//Для кон�
 let tasksData = [];
 
 
-let lastElementId = parseInt(localStorage.getItem("lastElementId")) || 0;//Уникальный id для каждой новой задачи
+// let lastElementId = parseInt(localStorage.getItem("lastElementId")) || 0;//Уникальный id для каждой новой задачи
 
 
 //Сохраняем все данные которые имеем на странице (галочка, текст, id)
@@ -17,35 +17,44 @@ function saveData() {
 	localStorage.setItem("tasksData", JSON.stringify(tasksData));
 }
 
-
-//Создаём блок с задачами в котором у нас есть поле галочки, текст, редактор задачи и снять задачу
 function addTask() {
-	if (inputBox.value === '') {
-		alert("Ты должен написать свою задачу!");
-	}
-	else {
-		const block = document.createElement("div");//Сам блок 
-		block.classList.add("tasks");
-		block.setAttribute("data-task-id", lastElementId++);//присваемваем уникальный id каждому новому 'блочку'
-		block.setAttribute("draggable", "true"); // Добавляем атрибут "draggable"
-		listContainer.appendChild(block);
-		const chekk = document.createElement("div");//Для галочки
-		chekk.classList.add("circle");
-		block.appendChild(chekk);
-		let text = document.createElement("p");//Для текста
-		text.innerHTML = inputBox.value;
-		block.appendChild(text);
-		let pencil = document.createElement ("div");//Для редактора 
-		pencil.classList.add ("editor");
-		block.appendChild(pencil);
-		let cross = document.createElement("span");//Для удаления задачи
-		cross.innerHTML = "\u00d7";
-		block.appendChild(cross);
-	}
-	inputBox.value = "";
-	localStorage.setItem("lastElementId", lastElementId);
-	saveData();
+  if (inputBox.value === '') {
+    alert("Ты должен написать свою задачу!");
+  } else {
+    const taskId = tasksData.length; // Уникальный id на основе длины массива
+    const task = {
+      id: taskId,
+      text: inputBox.value,
+      isChecked: false // По умолчанию задача не отмечена
+    };
+    tasksData.push(task); // Добавляем информацию о задаче в массив
+
+    // Остальной код создания задачи (HTML элемента) оставляем без изменений
+    const block = document.createElement("div");//Сам блок 
+    block.classList.add("tasks");
+    block.setAttribute("data-task-id", taskId);// Присваиваем уникальный id каждому новому 'блочку'
+    block.setAttribute("draggable", "true"); // Добавляем атрибут "draggable"
+    listContainer.appendChild(block);
+    const chekk = document.createElement("div");//Для галочки
+    chekk.classList.add("circle");
+    block.appendChild(chekk);
+    let text = document.createElement("p");//Для текста
+    text.innerHTML = inputBox.value;
+    block.appendChild(text);
+    let pencil = document.createElement ("div");//Для редактора 
+    pencil.classList.add ("editor");
+    block.appendChild(pencil);
+    let cross = document.createElement("span");//Для удаления задачи
+    cross.innerHTML = "\u00d7";
+    block.appendChild(cross);
+    
+    inputBox.value = '';
+    
+    // Сохраняем массив tasksData после добавления новой задачи
+    saveData();
+  }
 }
+
 
 
 //чтобы было удобно а не по клику добавлять задачи
@@ -99,16 +108,16 @@ listContainer.addEventListener("drop", function(event) {
 
 
 function showTask() {
-	// Получение сохраненных данных из localStorage
-	const savedData = localStorage.getItem("tasksData");
+  // Получение сохраненных данных из localStorage
+  const savedData = localStorage.getItem("tasksData");
 
-	if (savedData) {
-		// Если есть сохраненные данные, парсим их из JSON
-		const tasksData = JSON.parse(savedData);
+  if (savedData) {
+    // Если есть сохраненные данные, парсим их из JSON
+    tasksData = JSON.parse(savedData);
 
-		// Проходим по каждому элементу в массиве tasksData
-		tasksData.forEach(taskData => {
-			// Создание элемента задачи (блока)
+    // Проходим по каждому элементу в массиве tasksData
+    tasksData.forEach(taskData => {
+// Создание элемента задачи (блока)
 			const taskElement = document.createElement("div");
 			taskElement.classList.add("tasks"); // Добавляем класс "tasks" к элементу
 			taskElement.setAttribute("data-task-id", taskData.id); // Устанавливаем идентификатор задачи
@@ -141,13 +150,12 @@ function showTask() {
 
 			// Добавляем созданный элемент задачи в контейнер списка
 			listContainer.appendChild(taskElement);
-		});
-	}
+    });
+  }
 }
 
 
 //для того чтобы ставить и убирать галочку, зачёкивать выполненную задачу и убирать задачу из списка при нажатии на крестик
-//!нужно реализовать так, чтобы изменения приходили в силу при нажатии на галочку а не на текст
 listContainer.addEventListener("click", function(e) {
   if (e.target.classList.contains("circle")) {
     e.target.classList.toggle("checked");
@@ -170,37 +178,61 @@ listContainer.addEventListener("click", function(e) {
 		const par = e.target.previousElementSibling;
 		if (par && par.tagName === "P") {
 		par.classList.toggle("invis");//Пропадает текст par
+		par.previousElementSibling.classList.toggle("invis");
 		const editTask = document.createElement("input");//Создаём input
 		editTask.type = "text";
 		editTask.classList.add("newTask");
 		editTask.value = par.textContent; //Даём ему значение того что было в p
 		par.parentElement.insertBefore(editTask, par.nextSibling);//Вставляем input после par то есть по сути на его же место т.к. его нет
+
+		editTask.focus();
+
 		editTask.addEventListener("keyup", function(event) {
 			if (event.key === "Enter") {
-				par.textContent = editTask.value;
-				par.classList.remove("invis");
-				editTask.remove();//После нажатия ENTER данные из input попадают в par после он сам пропадает и с par снимается invis
-				saveData();
+				let newValue = editTask.value.trim();
+				if (newValue === "") {
+					while (newValue === "") {
+						// Если input пустой, показываем alert и затем повторно вызываем prompt
+						alert("Не оставляйте поле пустым!");
+						newValue = prompt("Внесите изменения или оставьте как есть:", par.textContent);
+							}
+					}
+					
+					par.textContent = newValue;
+					par.classList.remove("invis");
+					par.previousElementSibling.classList.remove("invis");
+					editTask.remove();
+					saveData();
 			}
-		});
-	}
+	});
+}
 }
 }, false);
+
+
+
+
 
 // Функция для перемещения элементов tasks с классом "checked"
 // Функция для перемещения элементов tasks с классом "checked"
 function moveChecked() {
-  const tasks = document.querySelectorAll('.tasks');
-  
-  tasks.forEach(function(taskElement) {
-    const parIsChecked = taskElement.querySelector('p.checked');
-    if (parIsChecked) {
+  const checkedTasks = tasksData.filter(task => task.isChecked);
+
+  checkedTasks.forEach(checkedTask => {
+    // Находим задачу в DOM по её уникальному идентификатору
+    const taskElement = document.querySelector(`[data-task-id="${checkedTask.id}"]`);
+
+    if (taskElement) {
+      // Удаляем задачу из списка
       listContainer.removeChild(taskElement);
+
+      // Добавляем её в контейнер для завершенных задач
       const checkContainer = document.getElementById('check'); // Проверьте, что элемент с id "check" действительно существует
       checkContainer.appendChild(taskElement);
     }
   });
 }
+
 
 
 
