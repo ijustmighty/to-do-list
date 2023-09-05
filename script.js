@@ -121,6 +121,7 @@ function showTask() {
 			const taskElement = document.createElement("div");
 			taskElement.classList.add("tasks"); // Добавляем класс "tasks" к элементу
 			taskElement.setAttribute("data-task-id", taskData.id); // Устанавливаем идентификатор задачи
+			taskElement.setAttribute("draggable", "true");
 
 			// Создание элемента для галочки
 			const chekk = document.createElement("div");
