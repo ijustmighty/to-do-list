@@ -45,7 +45,7 @@ function addTask() {
     pencil.classList.add ("editor");
     block.appendChild(pencil);
     let cross = document.createElement("span");//Для удаления задачи
-    cross.innerHTML = "\u00d7";
+    cross.innerHTML = "\u274C";
     block.appendChild(cross);
     
     inputBox.value = '';
@@ -148,7 +148,7 @@ function showTask() {
 
 			// Создание элемента для удаления задачи
 			const cross = document.createElement("span");
-			cross.innerHTML = "\u00d7"; // Устанавливаем символ "×" для удаления
+			cross.innerHTML = "\u274C"; // Устанавливаем символ "×" для удаления
 			taskElement.appendChild(cross);
 
 			// Добавляем созданный элемент задачи в контейнер списка
@@ -183,40 +183,58 @@ listContainer.addEventListener("click", function(e) {
 
 //Меняем текст в задаче
 listContainer.addEventListener("click", function(e) {
-	if(e.target.classList.contains("editor")) {//Нажимаем карандаш 
-		const par = e.target.previousElementSibling;
-		if (par && par.tagName === "P") {
-		par.classList.toggle("invis");//Пропадает текст par
-		par.previousElementSibling.classList.toggle("invis");
-		const editTask = document.createElement("input");//Создаём input
-		editTask.type = "text";
-		editTask.classList.add("newTask");
-		editTask.value = par.textContent; //Даём ему значение того что было в p
-		par.parentElement.insertBefore(editTask, par.nextSibling);//Вставляем input после par то есть по сути на его же место т.к. его нет
+  if (e.target.classList.contains("editor")) {
+    const par = e.target.previousElementSibling;
+    if (par && par.tagName === "P") {
+      par.classList.toggle("invis");
+      par.previousElementSibling.classList.toggle("invis");
+			par.nextElementSibling.classList.toggle("invis");
+      const editTask = document.createElement("input");
+      editTask.type = "text";
+      editTask.classList.add("newTask");
+      editTask.value = par.textContent;
+      par.parentElement.insertBefore(editTask, par.nextSibling);
 
-		editTask.focus();
+      editTask.focus();
 
-		editTask.addEventListener("keyup", function(event) {
-			if (event.key === "Enter") {
-				let newValue = editTask.value.trim();
-				if (newValue === "") {
-					while (newValue === "") {
-						// Если input пустой, показываем alert и затем повторно вызываем prompt
-						alert("Не оставляйте поле пустым!");
-						newValue = prompt("Внесите изменения или оставьте как есть:", par.textContent);
-							}
-					}
+      const cancelButton = document.createElement("button"); // Создаем кнопку "Отменить"
+			cancelButton.classList.add("cancel");
+      cancelButton.textContent = "\u00d7";
+      cancelButton.addEventListener("click", function() {
+        par.classList.remove("invis");
+        par.previousElementSibling.classList.remove("invis");
+				cancelButton.nextElementSibling.classList.remove("invis");
+        editTask.remove();
+        cancelButton.remove(); // Удаляем кнопку "Отменить"
+      });
+
+      editTask.addEventListener("keyup", function(event) {
+        if (event.key === "Enter") {
+          let newValue = editTask.value.trim();
+          if (newValue === "") {
+            while (newValue === "") {
+              alert("Не оставляйте поле пустым!");
+              newValue = prompt("Внесите изменения или оставьте как есть:", par.textContent);
+            }
+          }
+
+          par.textContent = newValue;
+          par.classList.remove("invis");
+          par.previousElementSibling.classList.remove("invis");
+					par.nextElementSibling.classList.remove("invis");
+
+          editTask.remove();
+          cancelButton.remove(); // Удаляем кнопку "Отменить"
 					
-					par.textContent = newValue;
-					par.classList.remove("invis");
-					par.previousElementSibling.classList.remove("invis");
-					editTask.remove();
-					saveData();
-			}
-	});
-}
-}
+          saveData();
+        }
+      });
+
+      par.parentElement.insertBefore(cancelButton, editTask.nextSibling); // Вставляем кнопку "Отменить" после поля ввода
+    }
+  }
 }, false);
+
 
 
 // Функция для перемещения элементов tasks с классом "checked"
