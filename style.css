@@ -131,6 +131,10 @@ p.invis {
 	line-height: 40px;
 }
 
+.editor.invis {
+	display: none;
+}
+
 span {
 	position: absolute;
 	right: 0;

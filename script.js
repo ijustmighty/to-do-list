@@ -35,9 +35,9 @@ function addTask() {
     block.setAttribute("data-task-id", taskId);// Присваиваем уникальный id каждому новому 'блочку'
     block.setAttribute("draggable", "true"); // Добавляем атрибут "draggable"
     listContainer.appendChild(block);
-    const chekk = document.createElement("div");//Для галочки
-    chekk.classList.add("circle");
-    block.appendChild(chekk);
+    const circle = document.createElement("div");//Для галочки
+    circle.classList.add("circle");
+    block.appendChild(circle);
     let text = document.createElement("p");//Для текста
     text.innerHTML = inputBox.value;
     block.appendChild(text);
@@ -124,12 +124,14 @@ function showTask() {
 			taskElement.setAttribute("draggable", "true");
 
 			// Создание элемента для галочки
-			const chekk = document.createElement("div");
-			chekk.classList.add("circle"); // Добавляем класс "circle" к элементу
+			const circle = document.createElement("div");
+			circle.classList.add("circle"); // Добавляем класс "circle" к элементу
+			taskElement.appendChild(circle);
 			if (taskData.isChecked) {
-				chekk.classList.add("checked"); // Если задача отмечена, добавляем класс "checked" для стилизации
+				circle.classList.add("checked"); // Если задача отмечена, добавляем класс "checked" для стилизации
+				taskElement.appendChild(circle);
 			}
-			taskElement.appendChild(chekk);
+			
 
 			// Создание элемента для текста задачи
 			const text = document.createElement("p");
@@ -164,6 +166,12 @@ listContainer.addEventListener("click", function(e) {
     if (text && text.tagName === "P") {
       text.classList.toggle("checked");
     }
+		const editor = text.nextElementSibling;
+		if (text.classList.contains("checked")){
+			editor.classList.toggle("invis");
+		} else {
+			editor.classList.remove("invis");
+		}
     saveData();
   } else if (e.target.tagName === "SPAN") {
     e.target.parentElement.remove();
@@ -211,10 +219,6 @@ listContainer.addEventListener("click", function(e) {
 }, false);
 
 
-
-
-
-// Функция для перемещения элементов tasks с классом "checked"
 // Функция для перемещения элементов tasks с классом "checked"
 function moveChecked() {
   const checkedTasks = tasksData.filter(task => task.isChecked);
