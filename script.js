@@ -1,9 +1,7 @@
 const inputBox = document.getElementById("input-box");//Для получения введённого текста задачи
 const listContainer = document.getElementById("list-container");//Для контейнера с задачами
+const checkedListContainer = document.getElementById("check");
 let tasksData = [];
-
-
-// let lastElementId = parseInt(localStorage.getItem("lastElementId")) || 0;//Уникальный id для каждой новой задачи
 
 
 //Сохраняем все данные которые имеем на странице (галочка, текст, id)
@@ -54,7 +52,6 @@ function addTask() {
     saveData();
   }
 }
-
 
 
 //чтобы было удобно а не по клику добавлять задачи
@@ -117,43 +114,44 @@ function showTask() {
 
     // Проходим по каждому элементу в массиве tasksData
     tasksData.forEach(taskData => {
-// Создание элемента задачи (блока)
-			const taskElement = document.createElement("div");
-			taskElement.classList.add("tasks"); // Добавляем класс "tasks" к элементу
-			taskElement.setAttribute("data-task-id", taskData.id); // Устанавливаем идентификатор задачи
-			taskElement.setAttribute("draggable", "true");
+      // Создание элемента задачи (блока)
+      const taskElement = document.createElement("div");
+      taskElement.classList.add("tasks"); // Добавляем класс "tasks" к элементу
+      taskElement.setAttribute("data-task-id", taskData.id); // Устанавливаем идентификатор задачи
+      taskElement.setAttribute("draggable", "true");
 
-			// Создание элемента для галочки
-			const circle = document.createElement("div");
-			circle.classList.add("circle"); // Добавляем класс "circle" к элементу
-			taskElement.appendChild(circle);
-			if (taskData.isChecked) {
-				circle.classList.add("checked"); // Если задача отмечена, добавляем класс "checked" для стилизации
-				taskElement.appendChild(circle);
-			}
-			
+      // Создание элемента для галочки
+      const circle = document.createElement("div");
+      circle.classList.add("circle"); // Добавляем класс "circle" к элементу
+      taskElement.appendChild(circle);
+      if (taskData.isChecked) {
+        circle.classList.add("checked"); // Если задача отмечена, добавляем класс "checked" для стилизации
+        taskElement.appendChild(circle);
+      }
 
-			// Создание элемента для текста задачи
-			const text = document.createElement("p");
-			text.textContent = taskData.text; // Устанавливаем текст задачи
-			if (taskData.isChecked) {
-				text.classList.add("checked"); // Если задача отмечена, добавляем класс "checked" для стилизации
-			}
-			taskElement.appendChild(text);
+      // Создание элемента для текста задачи
+      const text = document.createElement("p");
+      text.textContent = taskData.text; // Устанавливаем текст задачи
+      if (taskData.isChecked) {
+        text.classList.add("checked"); // Если задача отмечена, добавляем класс "checked" для стилизации
+      }
+      taskElement.appendChild(text);
 
-			// Создание элемента для редактирования задачи
-			const pencil = document.createElement("div");
-			pencil.classList.add("editor"); // Добавляем класс "editor" к элементу
-			taskElement.appendChild(pencil);
+      // Создание элемента для редактирования задачи
+      const pencil = document.createElement("div");
+      pencil.classList.add("editor"); // Добавляем класс "editor" к элементу
+      taskElement.appendChild(pencil);
 
-			// Создание элемента для удаления задачи
-			const cross = document.createElement("span");
-			cross.innerHTML = "\u274C"; // Устанавливаем символ "×" для удаления
-			taskElement.appendChild(cross);
+      // Создание элемента для удаления задачи
+      const cross = document.createElement("span");
+      cross.innerHTML = "\u274C"; // Устанавливаем символ "×" для удаления
+      taskElement.appendChild(cross);
 
-			// Добавляем созданный элемент задачи в контейнер списка
-			listContainer.appendChild(taskElement);
+      // Добавляем созданный элемент задачи в контейнер списка
+      listContainer.appendChild(taskElement);
     });
+		updateCheckedTasks();
+    // Вызываем функцию moveChecked для перемещения отмеченных задач в соответствующий контейн
   }
 }
 
@@ -169,16 +167,26 @@ listContainer.addEventListener("click", function(e) {
 		const editor = text.nextElementSibling;
 		if (text.classList.contains("checked")){
 			editor.classList.toggle("invis");
+
 		} else {
 			editor.classList.remove("invis");
 		}
+		updateCheckedTasks();
     saveData();
+		location.reload();
   } else if (e.target.tagName === "SPAN") {
     e.target.parentElement.remove();
     saveData();
   }
 }, false);
 
+
+checkedListContainer.addEventListener("click", function(e) {
+   if (e.target.tagName === "SPAN") {
+    e.target.parentElement.remove();
+    saveData();
+  }
+}, false);
 
 
 //Меняем текст в задаче
@@ -221,7 +229,7 @@ listContainer.addEventListener("click", function(e) {
           par.textContent = newValue;
           par.classList.remove("invis");
           par.previousElementSibling.classList.remove("invis");
-					par.nextElementSibling.classList.remove("invis");
+					cancelButton.nextElementSibling.classList.remove("invis");
 
           editTask.remove();
           cancelButton.remove(); // Удаляем кнопку "Отменить"
@@ -236,30 +244,21 @@ listContainer.addEventListener("click", function(e) {
 }, false);
 
 
-
-// Функция для перемещения элементов tasks с классом "checked"
-function moveChecked() {
+function updateCheckedTasks() {
   const checkedTasks = tasksData.filter(task => task.isChecked);
 
   checkedTasks.forEach(checkedTask => {
-    // Находим задачу в DOM по её уникальному идентификатору
     const taskElement = document.querySelector(`[data-task-id="${checkedTask.id}"]`);
-
     if (taskElement) {
-      // Удаляем задачу из списка
-      listContainer.removeChild(taskElement);
-
-      // Добавляем её в контейнер для завершенных задач
-      const checkContainer = document.getElementById('check'); // Проверьте, что элемент с id "check" действительно существует
-      checkContainer.appendChild(taskElement);
+      const checkContainer = document.getElementById('check');
+      if (checkContainer) {
+        listContainer.removeChild(taskElement);
+        checkContainer.appendChild(taskElement);
+      }
     }
   });
 }
 
 
-
-
-// Вызываем функцию для перемещения элементов при загрузке страницы
-moveChecked();
-
 showTask();
+
