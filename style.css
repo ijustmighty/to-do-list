@@ -46,6 +46,25 @@ input {
 	font-size: medium;
 }
 
+/* Базовый стиль */
+input.newTask {
+  border: 2px solid grey;
+  border-radius: 5px;
+  outline: none;
+  max-width: 290px;
+	height: 28px;
+  transition: border-color 0.3s ease;
+	background-color: #ccc;
+}
+
+/* Эффект при фокусе */
+input.newTask:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+	width: 150px !important;
+}
+
+
 button {
 	border: none;
 	outline: none;
@@ -67,7 +86,7 @@ button {
 	display: flex;
 }
 
-.krugalochka { 
+.circle { 
 	content: '';
 	position: absolute;
 	height: 28px;
@@ -80,8 +99,12 @@ button {
 	left: 8px;
 }
 
-.krugalochka.checked {
+.circle.checked {
 	background-image: url(images/checked.png);
+}
+
+p {
+	padding-top: 3px;
 }
 
 p.checked {
@@ -108,6 +131,10 @@ p.invis {
 	line-height: 40px;
 }
 
+.editor.invis {
+	display: none;
+}
+
 span {
 	position: absolute;
 	right: 0;
@@ -126,13 +153,32 @@ span:hover {
 } 
 
 
-/* #list-container {
-	border: 1px dotted green;
+#list-container {
+  background-color: #f5b3b3; /* Цвет фона контейнера */
+  padding: 20px; /* Внутренний отступ */
+  border-radius: 10px; /* Скругление углов */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Тень */
+  margin: 0 auto; /* Центрирование по горизонтали */
 }
 
 
 #check {
-	border: 1px dotted red;
-	height: 100px;
-} */
+  background-color: #c8fadf; /* Цвет фона контейнера */
+  padding: 20px; 
+  border-radius: 10px; /* Скругление углов */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Тень */
+  margin: 0 auto; /* Центрирование по горизонтали */
+}
 
+.circle.invis {
+	display: none;
+}
+
+.cancel {
+	background-color: white;
+	border-radius: 5px;
+	margin-left: 21px;
+	padding: 4px 8px 3px 9px;
+	border: none;
+	align-items: center;
+}
