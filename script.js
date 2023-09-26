@@ -9,7 +9,7 @@ function saveData() {
 	const tasksData = Array.from(listContainer.querySelectorAll(".tasks")).map(taskElement => {
 		const taskId = taskElement.getAttribute("data-task-id");
 		const text = taskElement.querySelector("p").textContent;
-		const isChecked = taskElement.querySelector(".circle").classList.contains("checked");
+		const isChecked = taskElement.querySelector(".list-circle").classList.contains("checked-circle");
 		return { id: taskId, text: text, isChecked: isChecked };
 	});
 	localStorage.setItem("tasksData", JSON.stringify(tasksData));
@@ -34,7 +34,7 @@ function addTask() {
     block.setAttribute("draggable", "true"); // Добавляем атрибут "draggable"
     listContainer.appendChild(block);
     const circle = document.createElement("div");//Для галочки
-    circle.classList.add("circle");
+    circle.classList.add("list-circle");
     block.appendChild(circle);
     let text = document.createElement("p");//Для текста
     text.innerHTML = inputBox.value;
@@ -62,10 +62,26 @@ inputBox.addEventListener('keyup', function(event) {
 });
 
 
+
+function updateTasksData() {
+  tasksData = Array.from(listContainer.querySelectorAll(".tasks")).map(taskElement => {
+    const taskId = taskElement.getAttribute("data-task-id");
+    const text = taskElement.querySelector("p").textContent;
+    const isChecked = taskElement.querySelector(".list-circle").classList.contains("checked-circle");
+    return { id: taskId, text: text, isChecked: isChecked };
+  });
+}
+
+
+
+
+
+
 // Drag and drop
 // Обработчик события начала перетаскивания
 listContainer.addEventListener("dragstart", function(event) {
   event.dataTransfer.setData("text/plain", event.target.getAttribute("data-task-id"));
+  event.target.classList.add("dragging");
 });
 
 // Обработчик события перемещения над контейнером
@@ -76,6 +92,9 @@ listContainer.addEventListener("dragover", function(event) {
 // Обработчик события завершения перетаскивания
 listContainer.addEventListener("drop", function(event) {
 	event.preventDefault();
+	listContainer.addEventListener("dragend", function(event) {
+		event.target.classList.remove("dragging");
+	});
 	const taskId = event.dataTransfer.getData("text/plain");
 	const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
 
@@ -99,6 +118,7 @@ listContainer.addEventListener("drop", function(event) {
 		}
 
 		// Обновляем сохранение данных
+		updateTasksData();
 		saveData();
 	}
 });
@@ -122,10 +142,10 @@ function showTask() {
 
       // Создание элемента для галочки
       const circle = document.createElement("div");
-      circle.classList.add("circle"); // Добавляем класс "circle" к элементу
+      circle.classList.add("list-circle"); // Добавляем класс "circle" к элементу
       taskElement.appendChild(circle);
       if (taskData.isChecked) {
-        circle.classList.add("checked"); // Если задача отмечена, добавляем класс "checked" для стилизации
+        circle.classList.add("checked-circle"); // Если задача отмечена, добавляем класс "checked" для стилизации
         taskElement.appendChild(circle);
       }
 
@@ -133,7 +153,7 @@ function showTask() {
       const text = document.createElement("p");
       text.textContent = taskData.text; // Устанавливаем текст задачи
       if (taskData.isChecked) {
-        text.classList.add("checked"); // Если задача отмечена, добавляем класс "checked" для стилизации
+        text.classList.add("checked-text"); // Если задача отмечена, добавляем класс "checked" для стилизации
       }
       taskElement.appendChild(text);
 
@@ -158,24 +178,26 @@ function showTask() {
 
 //для того чтобы ставить и убирать галочку, зачёкивать выполненную задачу и убирать задачу из списка при нажатии на крестик
 listContainer.addEventListener("click", function(e) {
-  if (e.target.classList.contains("circle")) {
-    e.target.classList.toggle("checked");
+  if (e.target.classList.contains("list-circle")) {
+    e.target.classList.toggle("checked-circle");
     const text = e.target.nextElementSibling;
     if (text && text.tagName === "P") {
-      text.classList.toggle("checked");
+      text.classList.add("checked-text");
     }
 		const editor = text.nextElementSibling;
-		if (text.classList.contains("checked")){
+		if (text.classList.contains("checked-text")){
 			editor.classList.toggle("invis");
 
 		} else {
 			editor.classList.remove("invis");
 		}
+		updateTasksData();
 		updateCheckedTasks();
     saveData();
-		location.reload();
+
   } else if (e.target.tagName === "SPAN") {
     e.target.parentElement.remove();
+		updateTasksData();
     saveData();
   }
 }, false);
@@ -251,13 +273,14 @@ function updateCheckedTasks() {
     const taskElement = document.querySelector(`[data-task-id="${checkedTask.id}"]`);
     if (taskElement) {
       const checkContainer = document.getElementById('check');
-      if (checkContainer) {
+      if (checkContainer && taskElement.parentElement === listContainer) {
         listContainer.removeChild(taskElement);
         checkContainer.appendChild(taskElement);
       }
     }
   });
 }
+
 
 
 showTask();

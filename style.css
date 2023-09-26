@@ -86,7 +86,7 @@ button {
 	display: flex;
 }
 
-.circle { 
+.list-circle { 
 	content: '';
 	position: absolute;
 	height: 28px;
@@ -99,7 +99,7 @@ button {
 	left: 8px;
 }
 
-.circle.checked {
+.checked-circle {
 	background-image: url(images/checked.png);
 }
 
@@ -107,7 +107,7 @@ p {
 	padding-top: 3px;
 }
 
-p.checked {
+.checked-text {
 	color: #555;
 	text-decoration: line-through;
 }
@@ -159,6 +159,26 @@ span:hover {
   border-radius: 10px; /* Скругление углов */
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Тень */
   margin: 0 auto; /* Центрирование по горизонтали */
+}
+
+.list-container {
+  border: 2px dashed #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+[data-task-id] {
+  cursor: grab;
+}
+
+[data-task-id] {
+  transition: transform 0.3s;
+}
+
+[data-task-id].dragging {
+  transform: scale(1.1);
+  opacity: 0.7;
+  cursor: grabbing;
 }
 
 
