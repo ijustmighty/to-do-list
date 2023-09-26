@@ -149,12 +149,12 @@ span {
 }
 
 span:hover {
-	background: #d4ccff;
+	background: #fcc;
 } 
 
 
 #list-container {
-  background-color: #f5b3b3; /* Цвет фона контейнера */
+  background-color: #b8e5ff; /* Цвет фона контейнера */
   padding: 20px; /* Внутренний отступ */
   border-radius: 10px; /* Скругление углов */
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Тень */
